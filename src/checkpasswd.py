@@ -3,7 +3,7 @@ import hashlib
 import sys
 
 
-def requests_api_ada(query_char: str) -> requests.Response:
+def requests_api_data(query_char: str) -> requests.Response:
     url = "https://api.pwnedpasswords.com/range/" + query_char
     res = requests.get(url)
     if res.status_code != 200:
@@ -14,6 +14,9 @@ def requests_api_ada(query_char: str) -> requests.Response:
 
 
 def get_passwd_leaks_count(hashes: requests.Response, hash_to_check: str) -> int:
+    print(type(hashes))
+    print(type(hashes.text))
+    print(hashes.text[:50])
     matched_hashes = (line.split(":") for line in hashes.text.splitlines())
     for h, count in matched_hashes:
         if h == hash_to_check:
@@ -24,7 +27,7 @@ def get_passwd_leaks_count(hashes: requests.Response, hash_to_check: str) -> int
 def pwned_api_check(passwd: str) -> int:
     sha1passwd = hashlib.sha1(passwd.encode("utf-8")).hexdigest().upper()
     first5_char, tail = sha1passwd[:5], sha1passwd[5:]
-    response = requests_api_ada(first5_char)
+    response = requests_api_data(first5_char)
     return get_passwd_leaks_count(response, tail)
 
 
